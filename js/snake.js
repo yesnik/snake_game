@@ -111,10 +111,16 @@ var Game = (function ($) {
     initListeners = function () {
         $(document).on('keyup', onKeyUp);
     },
-    onKeyUp = function (e) {        
+    onKeyUp = function (e) {
+        var keyCode = e.keyCode;
+        
+        if ( $.inArray(keyCode, [37, 38, 39, 40]) === -1 ) {
+            return false;
+        }
+        
         clearBoard();
 
-        direction = getDirectionByKeyCode(e.keyCode);
+        direction = getDirectionByKeyCode(keyCode);
 
         updateSnakeCoords();
         
@@ -124,12 +130,9 @@ var Game = (function ($) {
     },
     detectCollisions = function () {
         if (isTargetCollision()) {
-            //snakeChains.unshift([target[0], target[1]]);
-            //moveSnakeHead();
             appendChainToSnake();
             targetRemove();
             placeTarget();
-            console.log(snakeChains);
             return;
         }
         
