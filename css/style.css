@@ -1,0 +1,17 @@
+.board{
+    width:200px;
+    height:200px;
+    background: #eee;
+    border: 1px solid #bbb;
+}
+.board li div{
+    float:left;
+    width: 20px;
+    height: 20px;
+}
+.chain{
+    background: #494;
+}
+.target{
+    background: #c33;
+}
