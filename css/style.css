@@ -1,20 +1,35 @@
-.board {
-    width: 200px;
-    height: 200px;
+body {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+h3 {
+    font-size:22px;
+    background-color: #f66;
+    text-align: center;
+    margin: 10px 0;
+}
+
+p {
+    text-align: center;
+    font-size: 16px;
+    color: #999;
+}
+
+.board{
+    width:200px;
+    height:200px;
+    margin: 60px auto;
     background: #eee;
     border: 1px solid #bbb;
 }
-
-.board li div {
-    float: left;
+.board li div{
+    float:left;
     width: 20px;
     height: 20px;
 }
-
-.chain {
+.chain{
     background: #494;
 }
-
-.target {
+.target{
     background: #c33;
 }

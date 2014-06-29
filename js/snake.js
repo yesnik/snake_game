@@ -19,11 +19,8 @@ var Game = (function ($) {
         renderSnake(snakeChains);
     },
     restart = function () {
-        clearBoard();
-        targetRemove();
-        snakeChains = copy_array(config.snakeChains);
-        renderSnake(snakeChains);
-        placeTarget();
+        //TODO: Сделать перезапуск змейки без перезагрузки страницы
+        location.href = location.href;
     },
     placeTarget = function () {
         //Генерируем координаты цели, пока не получим корректное значение
@@ -51,24 +48,29 @@ var Game = (function ($) {
         return false;
     },
     createBoard = function () {
-        var board = new Board(config.board.id);
+        board = new Board(config.board.id);
         board.create();
     },
     timer,
     start = function () {
         timer = setInterval(function () {
             clearBoard();
-            var coordsArr = updateSnakeCoords();
+            var coordsArr = updateSnakeCoords(true);
+            
+            snakeChains = coordsArr;
+            
+            detectCollisions();
+            
             renderSnake(coordsArr);
-        }, 1000);
+        }, 600);
     },
     stop = function () {
         clearInterval(timer);
     },
     clearBoard = function () {
-        board.find('div.' + config.chainClass).removeClass(config.chainClass);
+        $('#board').find('div.' + config.chainClass).removeClass(config.chainClass);
     },
-    updateSnakeCoords = function () {
+    updateSnakeCoords = function (doUpdate) {
         var snakeChainsCopy,
             i, moveToDirection, 
             len;
@@ -85,8 +87,9 @@ var Game = (function ($) {
         }
         
         //Меняем координаты головы змейки
-        moveSnakeHead();
-
+        if (doUpdate) {
+            moveSnakeHead();
+        }
         return snakeChains;
     },
     moveSnakeHead = function () {
@@ -122,29 +125,31 @@ var Game = (function ($) {
 
         direction = getDirectionByKeyCode(keyCode);
 
-        updateSnakeCoords();
+        updateSnakeCoords(true);
         
-        detectCollisions();
-
-        renderSnake(snakeChains);
+        if (detectCollisions()) {
+            console.log('Render after detectiong collisions.');
+            renderSnake(snakeChains);
+        }
     },
     detectCollisions = function () {
         if (isTargetCollision()) {
             appendChainToSnake();
             targetRemove();
             placeTarget();
-            return;
+            return true;
         }
         
         if (hasSnakeSelfCollision()) {
-            alert('Game Over');
+            alert('Game Over - Self Collision');
             restart();
-        }
-        
-        if (hasBorderCollision()) {
-            alert('Game Over');
+            return false;
+        } else if (hasBorderCollision()) {
+            alert('Game Over - Collision with border');
             restart();
+            return false;
         }
+        return true;
     },
     hasBorderCollision = function() {
         var headX = snakeChains[0][0],
@@ -163,6 +168,8 @@ var Game = (function ($) {
     },
     hasSnakeSelfCollision = function () {
         var i, j, link, len = snakeChains.length;
+        console.log('Snake self collisions');
+        console.log(snakeChains);
         for (i = 0; i < len; i += 1) {
             link = snakeChains[i].toString();
             for (j = i + 1; j < len; j += 1) {
@@ -227,6 +234,7 @@ var Game = (function ($) {
     
     return {
         init: init,
+        start: start,
         stop: stop
     };
 }(jQuery));
@@ -244,10 +252,10 @@ function copy_array (arr) {
     return arr_copy;
 }
 
-
 $(document).ready(function(){
     try {
         Game.init();
+        Game.start();
     } catch (e) {
         alert(e.message);
     }
