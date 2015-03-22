@@ -1,19 +1,15 @@
-var Board = function (boardId, config) {
+var Board = function (boardId, options) {
     'use strict';
-    var options = $.extend({
-        widthPx: 10,
-        heightPx: 10,
-        rows: 10,
-        cols: 10
-    }, config);
+    var config = $.extend({
+        rowsNum: 10,
+        colsNum: 10
+    }, options);
     if (boardId === undefined) {
         throw ({message: "board_id is required in Board class constructor"});
     }
 
-    this.widthPx = options.widthPx;
-    this.heightPx = options.heightPx;
-    this.rows = options.rows;
-    this.cols = options.cols;
+    this.rowsNum = config.rowsNum;
+    this.colsNum = config.colsNum;
     this.boardId = boardId;
 };
 Board.prototype = {
@@ -29,7 +25,7 @@ Board.prototype = {
     getBoardHtml: function () {
         'use strict';
         var i, html = '';
-        for (i = 0; i < this.rows; i += 1) {
+        for (i = 0; i < this.rowsNum; i += 1) {
             html += '<li>';
             html += this.getRowHtml();
             html += '</li>';
@@ -39,7 +35,7 @@ Board.prototype = {
     getRowHtml: function () {
         'use strict';
         var i, html = '';
-        for (i = 0; i < this.cols; i += 1) {
+        for (i = 0; i < this.colsNum; i += 1) {
             html += '<div></div>';
         }
         return html;
