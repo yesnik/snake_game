@@ -9,7 +9,7 @@ var Game = (function ($) {
             targetClass: 'target',
             snakeChains: [[0, 5], [0, 6], [0, 7], [0, 8]]
         }, options);
-        snakeChains = copy_array(config.snakeChains);
+        snakeChains = $.extend(true, [], config.snakeChains);
         createBoard();
         initElements();
         initListeners();
@@ -74,7 +74,7 @@ var Game = (function ($) {
             len;
         
         //Делаем независимую копию элементов змейки
-        snakeChainsCopy = copy_array(snakeChains);
+        snakeChainsCopy = $.extend(true, [], snakeChains);
         
         len = snakeChainsCopy.length;
         
@@ -235,19 +235,6 @@ var Game = (function ($) {
         stop: stop
     };
 }(jQuery));
-
-
-function copy_array (arr) {
-    var arr_copy = [], i, len = arr.length;
-    for (i = 0; i < len; i += 1) {
-        if (typeof arr[i] === 'object') {
-            arr_copy[i] = copy_array(arr[i]);
-        } else {
-            arr_copy[i] = arr[i];
-        }
-    }
-    return arr_copy;
-}
 
 $(document).ready(function(){
     try {
