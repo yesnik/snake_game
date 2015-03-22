@@ -126,7 +126,6 @@ var Game = (function ($) {
         updateSnakeCoords(true);
         
         if (detectCollisions()) {
-            console.log('Render after detectiong collisions.');
             renderSnake(snakeChains);
         }
     },
@@ -152,7 +151,7 @@ var Game = (function ($) {
     hasBorderCollision = function() {
         var headX = snakeChains[0][0],
             headY = snakeChains[0][1];
-        
+
         if (( headX >= 0 && headX <= board.colsNum - 1) && 
             ( headY >= 0 && headY <= board.rowsNum - 1)) {
             return false;
@@ -167,8 +166,6 @@ var Game = (function ($) {
     },
     hasSnakeSelfCollision = function () {
         var i, j, link, len = snakeChains.length;
-        console.log('Snake self collisions');
-        console.log(snakeChains);
         for (i = 0; i < len; i += 1) {
             link = snakeChains[i].toString();
             for (j = i + 1; j < len; j += 1) {
