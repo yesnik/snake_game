@@ -1,8 +1,6 @@
 var Board = function (boardId, options) {
     'use strict';
     var config = $.extend({
-        widthPx: 10,
-        heightPx: 10,
         rows: 10,
         cols: 10
     }, options);
@@ -10,8 +8,6 @@ var Board = function (boardId, options) {
         throw ({message: "board_id is required in Board class constructor"});
     }
 
-    this.widthPx = config.widthPx;
-    this.heightPx = config.heightPx;
     this.rows = config.rows;
     this.cols = config.cols;
     this.boardId = boardId;
