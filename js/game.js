@@ -3,9 +3,7 @@ var Game = (function ($) {
     var init = function (options) {
         config = $.extend({
             board: {
-                id: 'board',
-                widthCellsNum: 10,
-                heightCellsNum: 10
+                id: 'board'
             },
             chainClass: 'chain',
             targetClass: 'target',
@@ -33,8 +31,8 @@ var Game = (function ($) {
         renderCell(target[0], target[1], config.targetClass);
     },
     getRandomCoords = function () {
-        var randX = parseInt(Math.random() * config.board.widthCellsNum, 10),
-            randY = parseInt(Math.random() * config.board.widthCellsNum, 10);
+        var randX = parseInt(Math.random() * board.colsNum, 10),
+            randY = parseInt(Math.random() * board.colsNum, 10);
         return [randX, randY];
     },
     hasCollisionWithSnake = function (x, y) {
@@ -109,7 +107,7 @@ var Game = (function ($) {
         }
     },
     initElements = function () {
-        board = $('#' + config.board.id);
+        $board = $('#' + config.board.id);
     },
     initListeners = function () {
         $(document).on('keyup', onKeyUp);
@@ -154,8 +152,9 @@ var Game = (function ($) {
     hasBorderCollision = function() {
         var headX = snakeChains[0][0],
             headY = snakeChains[0][1];
-        if (( headX >= 0 && headX <= config.board.widthCellsNum - 1) && 
-            ( headY >= 0 && headY <= config.board.heightCellsNum - 1)) {
+        
+        if (( headX >= 0 && headX <= board.colsNum - 1) && 
+            ( headY >= 0 && headY <= board.rowsNum - 1)) {
             return false;
         } else {
             return true;
@@ -211,7 +210,7 @@ var Game = (function ($) {
         return false;
     },
     targetRemove = function () {
-        var target_elem = board.find('li:eq(' + target[1] + ')').find('div:eq(' + target[0] + ')');
+        var target_elem = $board.find('li:eq(' + target[1] + ')').find('div:eq(' + target[0] + ')');
         target_elem.removeClass(config.targetClass);
     },
 
@@ -222,10 +221,11 @@ var Game = (function ($) {
         }
     },
     renderCell = function (x, y, css_class) {
-        var chain_elem = board.find('li:eq(' + y + ')').find('div:eq(' + x + ')');
+        var chain_elem = $board.find('li:eq(' + y + ')').find('div:eq(' + x + ')');
         chain_elem.addClass(css_class);
     },
     board,
+    $board,
     pointsChangeArr = [],
     direction = 't', //'r', 'l', 't', 'b'
     snakeChains,
