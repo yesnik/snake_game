@@ -9,16 +9,30 @@ var Game = (function ($) {
             targetClass: 'target',
             snakeChains: [[0, 5], [0, 6], [0, 7], [0, 8]]
         }, options);
-        snakeChains = $.extend(true, [], config.snakeChains);
+
         createBoard();
         initElements();
         initListeners();
+
+        //Копируем config.snakeChains в отдельную переменную
+        snakeChains = $.extend(true, [], config.snakeChains);
+
         placeTarget();
         renderSnake(snakeChains);
+    },
+    initElements = function () {
+        $board = $('#' + config.board.id);
+    },
+    initListeners = function () {
+        $(document).on('keyup', onKeyUp);
     },
     restart = function () {
         //TODO: Сделать перезапуск змейки без перезагрузки страницы
         location.href = location.href;
+    },
+    createBoard = function () {
+        board = new Board(config.board.id);
+        board.create();
     },
     placeTarget = function () {
         //Генерируем координаты цели, пока не получим корректное значение
@@ -29,6 +43,12 @@ var Game = (function ($) {
             }
         }
         renderCell(target[0], target[1], config.targetClass);
+    },
+    renderSnake = function (snakeChainsArr) {
+        var i, len = snakeChainsArr.length;
+        for (i = 0; i < len; i += 1) {
+            renderCell(snakeChainsArr[i][0], snakeChainsArr[i][1], config.chainClass);
+        }
     },
     getRandomCoords = function () {
         var randX = parseInt(Math.random() * board.colsNum, 10),
@@ -44,10 +64,6 @@ var Game = (function ($) {
             }
         }
         return false;
-    },
-    createBoard = function () {
-        board = new Board(config.board.id);
-        board.create();
     },
     timer,
     start = function () {
@@ -105,12 +121,6 @@ var Game = (function ($) {
                 snakeChains[0][1] += 1;
                 break;
         }
-    },
-    initElements = function () {
-        $board = $('#' + config.board.id);
-    },
-    initListeners = function () {
-        $(document).on('keyup', onKeyUp);
     },
     onKeyUp = function (e) {
         var keyCode = e.keyCode;
@@ -209,13 +219,6 @@ var Game = (function ($) {
     targetRemove = function () {
         var target_elem = $board.find('li:eq(' + target[1] + ')').find('div:eq(' + target[0] + ')');
         target_elem.removeClass(config.targetClass);
-    },
-
-    renderSnake = function (snakeChainsArr) {
-        var i, len = snakeChainsArr.length;
-        for (i = 0; i < len; i += 1) {
-            renderCell(snakeChainsArr[i][0], snakeChainsArr[i][1], config.chainClass);
-        }
     },
     renderCell = function (x, y, css_class) {
         var chain_elem = $board.find('li:eq(' + y + ')').find('div:eq(' + x + ')');
