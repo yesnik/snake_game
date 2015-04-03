@@ -226,7 +226,6 @@ var Game = (function ($) {
     },
     board,
     $board,
-    pointsChangeArr = [],
     direction = 't', //'r', 'l', 't', 'b'
     snakeChains,
     target = [5,5],
