@@ -19,7 +19,7 @@ var Game = (function ($) {
         snakeChains = $.extend(true, [], config.snakeChains);
 
         placeTarget();
-        renderSnake(snakeChains);
+        renderSnake();
     },
     initElements = function () {
         $board = $('#' + config.board.id);
@@ -49,11 +49,16 @@ var Game = (function ($) {
         }
         renderCell(target[0], target[1], config.targetClass);
     },
-    renderSnake = function (snakeChainsArr) {
+    renderSnake = function () {
+        var snakeChainsArr = snake.snakeChains;
         var i, len = snakeChainsArr.length;
         for (i = 0; i < len; i += 1) {
             renderCell(snakeChainsArr[i][0], snakeChainsArr[i][1], config.chainClass);
         }
+    },
+    renderCell = function (x, y, css_class) {
+        var chain_elem = $board.find('li:eq(' + y + ')').find('div:eq(' + x + ')');
+        chain_elem.addClass(css_class);
     },
     getRandomCoords = function () {
         var randX = parseInt(Math.random() * board.colsNum, 10),
@@ -74,13 +79,9 @@ var Game = (function ($) {
     start = function () {
         timer = setInterval(function () {
             clearBoard();
-            var coordsArr = updateSnakeCoords();
-            
-            snakeChains = coordsArr;
-            
+            snakeChains =  updateSnakeCoords();
             detectCollisions();
-            
-            renderSnake(coordsArr);
+            renderSnake();
         }, 600);
     },
     stop = function () {
@@ -203,10 +204,6 @@ var Game = (function ($) {
     targetRemove = function () {
         var target_elem = $board.find('li:eq(' + target[1] + ')').find('div:eq(' + target[0] + ')');
         target_elem.removeClass(config.targetClass);
-    },
-    renderCell = function (x, y, css_class) {
-        var chain_elem = $board.find('li:eq(' + y + ')').find('div:eq(' + x + ')');
-        chain_elem.addClass(css_class);
     },
     board,
     $board,
