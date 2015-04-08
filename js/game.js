@@ -11,6 +11,7 @@ var Game = (function ($) {
         }, options);
 
         createBoard();
+        createSnake();
         initElements();
         initListeners();
 
@@ -33,6 +34,10 @@ var Game = (function ($) {
     createBoard = function () {
         board = new Board(config.board.id);
         board.create();
+    },
+    createSnake = function () {
+        snake = new Snake(config.snakeChains);
+        snake.create();
     },
     placeTarget = function () {
         //Генерируем координаты цели, пока не получим корректное значение
@@ -90,37 +95,21 @@ var Game = (function ($) {
             len;
         
         //Делаем независимую копию элементов змейки
-        snakeChainsCopy = $.extend(true, [], snakeChains);
+        snakeChainsCopy = $.extend(true, [], snake.snakeChains);
         
         len = snakeChainsCopy.length;
         
         //Второе звено передвигаем на место первого, третье - на место второго...
         for (i = 1; i < len; i += 1) {
-            snakeChains[i][0] = snakeChainsCopy[i - 1][0];
-            snakeChains[i][1] = snakeChainsCopy[i - 1][1];
+            snake.snakeChains[i][0] = snakeChainsCopy[i - 1][0];
+            snake.snakeChains[i][1] = snakeChainsCopy[i - 1][1];
         }
         
         //Меняем координаты головы змейки
         if (doUpdate) {
-            moveSnakeHead();
+            snake.moveSnakeHead(direction);
         }
-        return snakeChains;
-    },
-    moveSnakeHead = function () {
-        switch (direction) {
-            case 'r':
-                snakeChains[0][0] += 1;
-                break;
-            case 'l':
-                snakeChains[0][0] -= 1;
-                break;
-            case 't':
-                snakeChains[0][1] -= 1;
-                break;
-            case 'b':
-                snakeChains[0][1] += 1;
-                break;
-        }
+        return snake.snakeChains;
     },
     onKeyUp = function (e) {
         var keyCode = e.keyCode;
@@ -228,6 +217,7 @@ var Game = (function ($) {
     $board,
     direction = 't', //'r', 'l', 't', 'b'
     snakeChains,
+    snake,
     target = [5,5],
     config;
     
