@@ -74,7 +74,7 @@ var Game = (function ($) {
     start = function () {
         timer = setInterval(function () {
             clearBoard();
-            var coordsArr = updateSnakeCoords(true);
+            var coordsArr = updateSnakeCoords();
             
             snakeChains = coordsArr;
             
@@ -89,26 +89,21 @@ var Game = (function ($) {
     clearBoard = function () {
         $('#board').find('div.' + config.chainClass).removeClass(config.chainClass);
     },
-    updateSnakeCoords = function (doUpdate) {
-        var snakeChainsCopy,
-            i, moveToDirection, 
-            len;
+    updateSnakeCoords = function () {
+        var snakeChainsCopy, i, len;
         
         //Делаем независимую копию элементов змейки
         snakeChainsCopy = $.extend(true, [], snake.snakeChains);
-        
-        len = snakeChainsCopy.length;
-        
+
         //Второе звено передвигаем на место первого, третье - на место второго...
-        for (i = 1; i < len; i += 1) {
+        for (i = 1, len = snakeChainsCopy.length; i < len; i += 1) {
             snake.snakeChains[i][0] = snakeChainsCopy[i - 1][0];
             snake.snakeChains[i][1] = snakeChainsCopy[i - 1][1];
         }
         
         //Меняем координаты головы змейки
-        if (doUpdate) {
-            snake.moveSnakeHead(direction);
-        }
+        snake.moveSnakeHead(direction);
+
         return snake.snakeChains;
     },
     onKeyUp = function (e) {
@@ -122,7 +117,7 @@ var Game = (function ($) {
 
         direction = getDirectionByKeyCode(keyCode);
 
-        updateSnakeCoords(true);
+        updateSnakeCoords();
         
         if (detectCollisions()) {
             renderSnake(snakeChains);
