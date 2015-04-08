@@ -2,7 +2,8 @@
 var Snake = function (boardId, options) {
     'use strict';
     var config = $.extend({
-        snakeChains: [[0, 5], [0, 6], [0, 7], [0, 8]]
+        snakeChains: [[0, 5], [0, 6], [0, 7], [0, 8]],
+        chainClass: 'chain'
     }, options);
 
     alert('Создали змейку');
@@ -12,6 +13,7 @@ var Snake = function (boardId, options) {
     //}
 
     this.snakeChains = config.snakeChains;
+    this.chainClass = config.chainClass;
 };
 Snake.prototype = {
     create: function () {
