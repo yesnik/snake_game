@@ -50,10 +50,9 @@ var Game = (function ($) {
         renderCell(target[0], target[1], config.targetClass);
     },
     renderSnake = function () {
-        var snakeChainsArr = snake.snakeChains;
-        var i, len = snakeChainsArr.length;
+        var i, len = snake.snakeChains.length;
         for (i = 0; i < len; i += 1) {
-            renderCell(snakeChainsArr[i][0], snakeChainsArr[i][1], config.chainClass);
+            renderCell(snake.snakeChains[i][0], snake.snakeChains[i][1], config.chainClass);
         }
     },
     renderCell = function (x, y, css_class) {
@@ -68,8 +67,7 @@ var Game = (function ($) {
     hasCollisionWithSnake = function (x, y) {
         var i, len = snakeChains.length;
         for (i = 0; i < len; i += 1) {
-            if (snakeChains[i][0] === x &&
-                    snakeChains[i][1] === y) {
+            if (snakeChains[i][0] === x && snakeChains[i][1] === y) {
                 return true;
             }
         }
@@ -192,9 +190,7 @@ var Game = (function ($) {
     isTargetCollision = function () {
         var i, len = snakeChains.length;
         for (i = 0; i < len; i += 1) {
-            if (snakeChains[i][0] === target[0] && 
-                snakeChains[i][1] === target[1]) {
-                
+            if (snakeChains[i][0] === target[0] && snakeChains[i][1] === target[1]) {
                 return true;
                 break;
             }
