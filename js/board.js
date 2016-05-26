@@ -1,20 +1,25 @@
-var Board = function (boardId, options) {
-    'use strict';
+/**
+ * Class for game board
+ * @param boardId - id attribute of html element to contain board
+ * @param config  - object with settings
+ */
+var Board = function (boardId, config) {
     var config = $.extend({
         rowsNum: 10,
         colsNum: 10
-    }, options);
+    }, config);
+
     if (boardId === undefined) {
-        throw ({message: "board_id is required in Board class constructor"});
+        throw ({message: "boardId is required in Board class constructor"});
     }
 
     this.rowsNum = config.rowsNum;
     this.colsNum = config.colsNum;
     this.boardId = boardId;
 };
+
 Board.prototype = {
     create: function () {
-        'use strict';
         var boardHtml = this.getBoardHtml(),
             board_el = $('#' + this.boardId);
         if (board_el.length === 0) {
@@ -23,7 +28,6 @@ Board.prototype = {
         board_el.html(boardHtml);
     },
     getBoardHtml: function () {
-        'use strict';
         var i, html = '';
         for (i = 0; i < this.rowsNum; i += 1) {
             html += '<li>';
@@ -33,7 +37,6 @@ Board.prototype = {
         return html;
     },
     getRowHtml: function () {
-        'use strict';
         var i, html = '';
         for (i = 0; i < this.colsNum; i += 1) {
             html += '<div></div>';
