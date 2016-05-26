@@ -5,20 +5,38 @@ var Game = (function ($) {
             board: {
                 id: 'board'
             },
-            chainClass: 'chain',
             targetClass: 'target',
             snakeChains: [[0, 5], [0, 6], [0, 7], [0, 8]]
         }, options);
-        snakeChains = $.extend(true, [], config.snakeChains);
+
         createBoard();
+        createSnake();
         initElements();
         initListeners();
+
+        //Копируем config.snakeChains в отдельную переменную
+        snakeChains = $.extend(true, [], config.snakeChains);
+
         placeTarget();
-        renderSnake(snakeChains);
+        renderSnake();
+    },
+    initElements = function () {
+        $board = $('#' + config.board.id);
+    },
+    initListeners = function () {
+        $(document).on('keyup', onKeyUp);
     },
     restart = function () {
         //TODO: Сделать перезапуск змейки без перезагрузки страницы
         location.href = location.href;
+    },
+    createBoard = function () {
+        board = new Board(config.board.id);
+        board.create();
+    },
+    createSnake = function () {
+        snake = new Snake(config.snakeChains);
+        snake.create();
     },
     placeTarget = function () {
         //Генерируем координаты цели, пока не получим корректное значение
@@ -30,6 +48,16 @@ var Game = (function ($) {
         }
         renderCell(target[0], target[1], config.targetClass);
     },
+    renderSnake = function () {
+        var i, len = snake.snakeChains.length;
+        for (i = 0; i < len; i += 1) {
+            renderCell(snake.snakeChains[i][0], snake.snakeChains[i][1], snake.chainClass);
+        }
+    },
+    renderCell = function (x, y, css_class) {
+        var chain_elem = $board.find('li:eq(' + y + ')').find('div:eq(' + x + ')');
+        chain_elem.addClass(css_class);
+    },
     getRandomCoords = function () {
         var randX = parseInt(Math.random() * board.colsNum, 10),
             randY = parseInt(Math.random() * board.colsNum, 10);
@@ -38,79 +66,41 @@ var Game = (function ($) {
     hasCollisionWithSnake = function (x, y) {
         var i, len = snakeChains.length;
         for (i = 0; i < len; i += 1) {
-            if (snakeChains[i][0] === x &&
-                    snakeChains[i][1] === y) {
+            if (snakeChains[i][0] === x && snakeChains[i][1] === y) {
                 return true;
             }
         }
         return false;
     },
-    createBoard = function () {
-        board = new Board(config.board.id);
-        board.create();
-    },
     timer,
     start = function () {
         timer = setInterval(function () {
             clearBoard();
-            var coordsArr = updateSnakeCoords(true);
-            
-            snakeChains = coordsArr;
-            
+            snakeChains =  updateSnakeCoords();
             detectCollisions();
-            
-            renderSnake(coordsArr);
+            renderSnake();
         }, 600);
     },
     stop = function () {
         clearInterval(timer);
     },
     clearBoard = function () {
-        $('#board').find('div.' + config.chainClass).removeClass(config.chainClass);
+        $('#board').find('div.' + snake.chainClass).removeClass(snake.chainClass);
     },
-    updateSnakeCoords = function (doUpdate) {
-        var snakeChainsCopy,
-            i, moveToDirection, 
-            len;
-        
+    updateSnakeCoords = function () {
+        var snakeChainsCopy, i, len;
         //Делаем независимую копию элементов змейки
-        snakeChainsCopy = $.extend(true, [], snakeChains);
-        
-        len = snakeChainsCopy.length;
-        
+        snakeChainsCopy = $.extend(true, [], snake.snakeChains);
+
         //Второе звено передвигаем на место первого, третье - на место второго...
-        for (i = 1; i < len; i += 1) {
-            snakeChains[i][0] = snakeChainsCopy[i - 1][0];
-            snakeChains[i][1] = snakeChainsCopy[i - 1][1];
+        for (i = 1, len = snakeChainsCopy.length; i < len; i += 1) {
+            snake.snakeChains[i][0] = snakeChainsCopy[i - 1][0];
+            snake.snakeChains[i][1] = snakeChainsCopy[i - 1][1];
         }
-        
         //Меняем координаты головы змейки
-        if (doUpdate) {
-            moveSnakeHead();
-        }
-        return snakeChains;
-    },
-    moveSnakeHead = function () {
-        switch (direction) {
-            case 'r':
-                snakeChains[0][0] += 1;
-                break;
-            case 'l':
-                snakeChains[0][0] -= 1;
-                break;
-            case 't':
-                snakeChains[0][1] -= 1;
-                break;
-            case 'b':
-                snakeChains[0][1] += 1;
-                break;
-        }
-    },
-    initElements = function () {
-        $board = $('#' + config.board.id);
-    },
-    initListeners = function () {
-        $(document).on('keyup', onKeyUp);
+        snake.moveSnakeHead(direction);
+
+        return snake.snakeChains;
     },
     onKeyUp = function (e) {
         var keyCode = e.keyCode;
@@ -123,8 +113,8 @@ var Game = (function ($) {
 
         direction = getDirectionByKeyCode(keyCode);
 
-        updateSnakeCoords(true);
-        
+        updateSnakeCoords();
+
         if (detectCollisions()) {
             renderSnake(snakeChains);
         }
@@ -197,9 +187,7 @@ var Game = (function ($) {
     isTargetCollision = function () {
         var i, len = snakeChains.length;
         for (i = 0; i < len; i += 1) {
-            if (snakeChains[i][0] === target[0] && 
-                snakeChains[i][1] === target[1]) {
-                
+            if (snakeChains[i][0] === target[0] && snakeChains[i][1] === target[1]) {
                 return true;
                 break;
             }
@@ -210,23 +198,12 @@ var Game = (function ($) {
         var target_elem = $board.find('li:eq(' + target[1] + ')').find('div:eq(' + target[0] + ')');
         target_elem.removeClass(config.targetClass);
     },
-
-    renderSnake = function (snakeChainsArr) {
-        var i, len = snakeChainsArr.length;
-        for (i = 0; i < len; i += 1) {
-            renderCell(snakeChainsArr[i][0], snakeChainsArr[i][1], config.chainClass);
-        }
-    },
-    renderCell = function (x, y, css_class) {
-        var chain_elem = $board.find('li:eq(' + y + ')').find('div:eq(' + x + ')');
-        chain_elem.addClass(css_class);
-    },
     board,
     $board,
-    pointsChangeArr = [],
     direction = 't', //'r', 'l', 't', 'b'
     snakeChains,
-    target = [5,5],
+    snake,
+    target = [5, 5],
     config;
     
     return {
